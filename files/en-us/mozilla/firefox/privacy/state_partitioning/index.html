@@ -34,16 +34,16 @@ tags:
   Browsers traditionally key client-side state by the origin (or sometimes
   registrable domain) of the location a resource was loaded from. For example,
   the cookies, localStorage objects, and caches available to an iframe loaded
-  from <code>https://tracker.example/hello.html</code> will be keyed by
-  <code>tracker.example</code>. This is true regardless of whether the browser
+  from <code>https://example.com/hello.html</code> will be keyed by
+  <code>example.com</code>. This is true regardless of whether the browser
   is currently loading the tracker as a <i>first party</i> website or as an
   embedded <i>third party</i> resource. Trackers have taken advantage of this
   cross-site state to store user identifiers and access them across websites.
-  The example below shows how <code>tracker.example</code> is able to use its
+  The example below shows how <code>example.com</code> is able to use its
   cross-site state (in this instance, cookies) to track a user across its
   own site as well as <code>A.example</code> and <code>B.example</code>.
 </p>
-<img src="example-cross-site-tracking.png" alt="An example of cross-site tracking">
+<img src="example-cross-site-state.png" alt="An example of cross-site state">
 
 <h3>Past approaches to blocking cross-site tracking</h3>
 <p>
@@ -72,7 +72,7 @@ tags:
   page being visited by the user.
 </p>
 <p>
-  In the example below <code>tracker.example</code> is embedded in
+  In the example below <code>example.com</code> is embedded in
   <code>A.example</code> and <code>B.example</code>. However, since storage is
   partitioned, there are three distinct storage buckets (instead of one). The tracker can still
   access storage, but since every storage bucket is additionally keyed under the
@@ -81,7 +81,7 @@ tags:
   when visited directly and then retrieving that identifier when embedded in
   other websites.
 </p>
-<img src="example-storage-partitioning.png" alt="An example of storage partitioning">
+<img src="example-state-partitioning.png" alt="An example of state partitioning">
 <h3>Standardization</h3>
 <p>
   The <a class="external" href="https://privacycg.github.io/">Privacy Community
