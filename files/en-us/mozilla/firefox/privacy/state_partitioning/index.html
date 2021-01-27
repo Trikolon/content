@@ -153,7 +153,7 @@ tags:
   automatically in specific scenarios. <a href="#partitioning_heuristics">You
   can read more about these heuristics here.</a></p>
 
-  <h4>Partitioned APIs</h4>
+  <h4 id="dynamically_partitioned_apis">Partitioned APIs</h4>
   <ul>
     <li><a href="/en-US/docs/Web/API/Document/cookie">Cookies</a></li>
     <li><a href="/en-US/docs/Web/API/Window/localStorage">localStorage</a></li>
@@ -166,16 +166,45 @@ tags:
   </ul>
 
   <h4 id="partitioning_heuristics">Storage Access Heuristics</h4>
-  <p>In order to maintain web compatibility Firefox employs heuristics to grant
-  storage access automatically.</p>
+  <p>
+    In order to improve web compatibility, Firefox currently includes some
+    heuristics to grant unpartitioned storage access automatically to third parties that
+    receive user interaction. These heuristics are intended to allow some
+    third-party integrations that are common on the web to continue to function.
+  </p>
+  <div class="warning">
+    <p><strong>Warning</strong>: Storage access heuristics are a transitional
+    feature meant to prevent website breakage. They should not be relied upon
+    for current and future web development.</p>
+  </div>
 
   <h5>Opener Heuristic</h5>
-  <p>
-    TODO
-    <!-- TODO: Is this the same heuristic as described here:
-    https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Privacy/Storage_access_policy#Automatic_storage_access_upon_interaction
-    -->
-  </p>
+    <p>
+      Storage access may be granted to a partitioned third-party when a user
+      gesture triggers a pop-up window that has
+      <a href="/en-US/docs/Web/API/Window/opener">opener access</a> to the
+      originating document. When that occurs, there are two possible ways a
+      third-party origin can be granted access: when a user gesture triggers a
+      pop-up window that has <a href="/en-US/docs/Web/API/Window/opener">opener
+      access</a> to the originating document. When that occurs, there are two
+      possible ways a third-party origin can be granted access:
+    </p>
+    <ul>
+      <li>
+        The origin of the resource that is initially loaded in the pop-up window
+        is granted storage access on the opener document. If we discover that an
+        origin is abusing this heuristic to gain tracking access, that origin will
+        have the additional requirement that it must have received user interaction
+        as a first party within the past 30 days.
+      </li>
+      <li>
+        After the initial resource is loaded in the pop-up window, the window
+        may go through a series of redirects to other hosts. If a user interacts
+        with the pop-up window following a redirect, the origin of the content
+        loaded in the pop-up window is given storage access on the opener
+        document.
+      </li>
+    </ul>
 
   <h5>Redirect Heuristic</h5>
   <p>Dynamic State Partitioning has a heuristic to enable typical login
@@ -185,22 +214,20 @@ tags:
   <code>a.example</code> if both <code>a.example</code> and
   <code>b.example</code> have been visited and interacted with within the last 10
   minutes. This storage access will be granted for 30 days.</p>
-  <div class="warning">
-    <p><strong>Warning</strong>: Storage access heuristics are a transitional
-    feature meant to prevent website breakage. They should not be relied upon
-    for current and future web development.</p>
-  </div>
   <h4 id="storage_access_api">Storage Access API</h5>
   <p>
     Third-party frames may use
     <a href="/en-US/docs/Web/API/Document/requestStorageAccess">
       <code>document.requestStorageAccess</code>
     </a>
-    to request access to the first party storage through the
+    to request unpartitioned storage access through the
     <a href="/en-US/docs/Web/API/Storage_Access_API">StorageAccessAPI</a>. Once
-    granted any requests from the third party frame to storage APIs will be made
-    in the context of the first-party.
-    <!-- TODO: describe what implications this has on previously partitioned storage -->
+    granted, the requesting third-party will gain access to the first-party
+    storage bucket. Any calls to <a
+    href="#dynamically_partitioned_apis">dynamically partitioned APIs</a>, for
+    example
+    <a href="/en-US/docs/Web/API/Window/localStorage">localStorage</a>, will be
+    made in context of the first-party bucket.
   </p>
 
 <h3 id="debugging">Debugging</h2>
