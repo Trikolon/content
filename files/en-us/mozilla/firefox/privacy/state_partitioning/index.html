@@ -178,42 +178,43 @@ tags:
     for current and future web development.</p>
   </div>
 
-  <h5>Opener Heuristic</h5>
-    <p>
-      Storage access may be granted to a partitioned third-party when a user
-      gesture triggers a pop-up window that has
+  <h5 id="storage_access_window_open_heuristics">Opener Heuristics</h5>
+  <ul>
+    <li>
+      When a partitioned third-party opens a pop-up window that has
       <a href="/en-US/docs/Web/API/Window/opener">opener access</a> to the
-      originating document. When that occurs, there are two possible ways a
-      third-party origin can be granted access: when a user gesture triggers a
-      pop-up window that has <a href="/en-US/docs/Web/API/Window/opener">opener
-      access</a> to the originating document. When that occurs, there are two
-      possible ways a third-party origin can be granted access:
-    </p>
-    <ul>
-      <li>
-        The origin of the resource that is initially loaded in the pop-up window
-        is granted storage access on the opener document. If we discover that an
-        origin is abusing this heuristic to gain tracking access, that origin will
-        have the additional requirement that it must have received user interaction
-        as a first party within the past 30 days.
-      </li>
-      <li>
-        After the initial resource is loaded in the pop-up window, the window
-        may go through a series of redirects to other hosts. If a user interacts
-        with the pop-up window following a redirect, the origin of the content
-        loaded in the pop-up window is given storage access on the opener
-        document.
-      </li>
-    </ul>
+      originating document, the third-party is granted storage access to its
+      embedder for 30 days.
+    </li>
+    <li>
+      When a first party <code>a.example</code> opens a third-party pop-up
+      <code>b.example</code>, <code>b.example</code> is granted
+      third-party storage access to <code>a.example</code> for 30 days.
+    </li>
+  </ul>
+  <div class="note">
+    <p><strong>Note</strong>: For third-parties which abuse these heuristic for
+    tracking purposes, we may require user interaction with the popup before
+    storage access is granted.</p>
+  </div>
 
-  <h5>Redirect Heuristic</h5>
-  <p>Dynamic State Partitioning has a heuristic to enable typical login
-  flows:</p>
-  <p>If a site <code>b.example</code> redirects to <code>a.example</code>, then
-  <code>b.example</code> receives storage access to its embedder
-  <code>a.example</code> if both <code>a.example</code> and
-  <code>b.example</code> have been visited and interacted with within the last 10
-  minutes. This storage access will be granted for 30 days.</p>
+  <h5 id="storage_access_redirect_heuristics">Redirect Heuristics</h5>
+  <ul>
+    <li>
+      If a site <code>b.example</code> redirects to <code>a.example</code>, then
+      <code>b.example</code> receives storage access to its embedder
+      <code>a.example</code> if both <code>a.example</code> and
+      <code>b.example</code> have been visited and interacted with within the last 10
+      minutes. This storage access will be granted for 15 minutes.
+    </li>
+    <li>
+      If a tracker <code>tracker.example</code> (as classified by the Enhanced
+      Tracking Protection) redirects to a non-tracker
+      <code>a.example</code> and <code>tracker.example</code> received user
+      interaction within the last 35 days, <code>tracker.example</code> is
+      granted storage access to <code>a.example</code> for 15 minutes.
+    </li>
+  </ul>
   <h4 id="storage_access_api">Storage Access API</h5>
   <p>
     Third-party frames may use
@@ -292,11 +293,18 @@ tags:
   editor</a>:
 </p>
 <ul>
-  <li><code>privacy.restrict3rdpartystorage.heuristic.recently_visited</code>:
-  Allow storage access after redirect for recently visited pages.</li>
-  <li><code>privacy.restrict3rdpartystorage.heuristic.recently_visited_time</code>: Allowed time gap since last visit in seconds.</li>
-  <li><code>privacy.restrict3rdpartystorage.heuristic.redirect</code>: TODO</li>
-  <li><code>privacy.restrict3rdpartystorage.heuristic.window_open</code>: Allow storage access for windows opened using window.open()</li>
+  <li>
+    Enable / disable the <a href="#storage_access_redirect_heuristics">redirect
+    heuristics</a>:
+    <code>privacy.restrict3rdpartystorage.heuristic.recently_visited,
+    privacy.restrict3rdpartystorage.heuristic.redirect</code>
+  </li>
+  <li>
+    Enable / disable the <a href="#storage_access_window_open_heuristics">window
+    open heuristics</a>:
+    <code>privacy.restrict3rdpartystorage.heuristic.window_open,
+    privacy.restrict3rdpartystorage.heuristic.opened_window_after_interaction</code>
+  </li>
 </ul>
 
 <h5>Disable Network Partitioning</h4>
