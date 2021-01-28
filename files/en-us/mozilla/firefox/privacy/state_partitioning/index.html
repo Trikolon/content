@@ -230,6 +230,12 @@ tags:
     <a href="/en-US/docs/Web/API/Window/localStorage">localStorage</a>, will be
     made in context of the first-party bucket.
   </p>
+  <div class="warning">
+    <p><strong>Warning</strong>: When storage access is granted there may still
+    be references to the partitioned storage. However, sites shouldn't rely on
+    being able to use partitioned and unpartitioned storage at the same
+    time.</p>
+  </div>
 
 <h3 id="debugging">Debugging</h2>
 <p>
